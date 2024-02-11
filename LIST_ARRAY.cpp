@@ -5,13 +5,12 @@
 class List
 {
     int arr[SIZE];
-    int end, beg;
+    int curr;
 
 public:
     List()
     {
-        end = -1;
-        beg = 0;
+        curr = -1;
     }
     int insbeg(int);
     int insend(int);
@@ -32,8 +31,8 @@ int main()
     int choice, num, pos;
     while (1)
     {
-        printf("Enter \n1. Insert Begin\n2. Append\n3. Insert Position");
-        printf("\n4. Delete Begin\n5. Pop\n6. Delete Position");
+        printf("\nEnter \n1. Insert Begin\n2. Append\n3. Insert Position");
+        printf("\n4. Pop\n5. Delete Begin\n6. Delete Position");
         printf("\n7. Search\n8. Display\n9. Exit");
         printf("\n Enter a choice:");
         scanf("%d", &choice);
@@ -103,14 +102,17 @@ int main()
         case 6:
             printf("\n Enter the position at which you want to delete:");
             scanf("%d", &pos);
-            if (l1.delpos(pos)){
+            if (l1.delpos(pos))
+            {
                 printf("Element successfully deleted.");
                 l1.display();
-            }else{
+            }
+            else
+            {
                 printf("List empty. Cannot delete.");
             }
             break;
-            case 7:
+        case 7:
             printf("\nEnter the number you want to search:");
             scanf("%d", &num);
             l1.search(num);
@@ -132,23 +134,23 @@ int main()
 // Method to insert a number in beginning of the list
 int List::insbeg(int num)
 {
-    if (end == SIZE - 1)
+    if (curr == SIZE - 1)
     {
         return 0;
     }
-    else if (end == -1)
+    else if (curr == -1)
     {
-        end = 0;
+        curr = 0;
         arr[0] = num;
         return 1;
     }
     else
     {
-        for (int i = end; i >= 0; i--)
+        for (int i = curr; i >= 0; i--)
         {
             arr[i + 1] = arr[i];
         }
-        end = end + 1;
+        curr = curr + 1;
         arr[0] = num;
         return 1;
     }
@@ -157,14 +159,14 @@ int List::insbeg(int num)
 // Method to insert a number in end of the list
 int List::insend(int num)
 {
-    if (end == SIZE - 1)
+    if (curr == SIZE - 1)
     {
         return 0;
     }
     else
     {
-        end += 1;
-        arr[end] = num;
+        curr += 1;
+        arr[curr] = num;
         return 1;
     }
 }
@@ -172,7 +174,7 @@ int List::insend(int num)
 // Method to insert a number in given position of the list
 int List::insposition(int num, int pos)
 {
-    if (end == SIZE - 1)
+    if (curr == SIZE - 1)
     {
         return 0;
     }
@@ -181,46 +183,19 @@ int List::insposition(int num, int pos)
         insbeg(num);
         return 1;
     }
-    else if (pos == end + 1)
+    else if (pos == curr + 1)
     {
         insend(num);
         return 1;
     }
     else
     {
-        for (int i = end; i >= pos; i--)
+        for (int i = curr; i >= pos; i--)
         {
             arr[i + 1] = arr[i];
         }
-        end += 1;
+        curr += 1;
         arr[pos] = num;
-        return 1;
-    }
-}
-
-// Method to delete the last number in the list
-int List::delend(){
-    if (end == -1 || (beg == end))
-    {
-        return 0;
-    }
-    else
-    {
-        end--;
-        return 1;
-    }
-}
-
-// Method to delete the first number in the list
-int List::delbegin()
-{
-    if (end == -1 || (beg == end))
-    {
-        return 0;
-    }
-    else
-    {
-        beg += 1;
         return 1;
     }
 }
@@ -229,7 +204,7 @@ int List::delbegin()
 int List::search(int num)
 {
     int found = 0;
-    for (int i = 0; i <= end; i++)
+    for (int i = 0; i <= curr; i++)
     {
         if (arr[i] == num)
         {
@@ -250,16 +225,74 @@ int List::search(int num)
 // Method to display the contents of the list
 void List::display()
 {
-    if (end == -1 || (beg == end))
+    if (curr == -1)
     {
         printf("\nEmpty List.");
     }
     else
     {
         printf("\nThe contents of the list are:");
-        for (int i = beg; i <= end; i++)
+        for (int i = 0; i <= curr; i++)
         {
             printf("%d ", arr[i]);
         }
+    }
+}
+
+// Method to delete the first element in the list
+int List::delbegin()
+{
+    if (curr == -1)
+    {
+        return 0; // Empty list
+    }
+    else
+    {
+        for (int i = 0; i < curr; i++)
+        {
+            arr[i] = arr[i + 1]; // Shift elements to the left to overwrite the first element
+        }
+        curr--;  
+        return 1;
+    }
+}
+
+// Method to delete the last element in the list
+int List::delend()
+{
+    if (curr == -1)
+    {
+        return 0; // Empty list
+    }
+    else
+    {
+        curr--;   // Decrement the current size of the list
+        return 1;
+    }
+}
+
+// Method to delete the iTH element in the list
+int List::delpos(int pos)
+{
+    if (curr == -1 || pos < 0 || pos > curr)
+    {
+        return 0; // Invalid position or empty list
+    }
+    else if (pos == 0)
+    {
+        return delbegin(); // Call delbegin() to delete the first element
+    }
+    else if (pos == curr)
+    {
+        return delend(); // Call delend() to delete the last element
+    }
+    else
+    {
+        for (int i = pos; i < curr; i++)
+        {
+            arr[i] = arr[i + 1]; // Shift elements to the left to overwrite the element at the given position
+        }
+        curr--; 
+        return 1;
     }
 }
