@@ -1,183 +1,353 @@
+// Linked List Implementation
 #include <stdio.h>
 #include <stdlib.h>
 
-struct node
+// Datatype of a node
+struct Node
 {
     int data;
-    struct node *next;
+    struct Node *next;
 };
 
-int count_nodes(struct node *);
-void display_nodes(struct node *);
-struct node *insert_beg(struct node *, int);
-struct node *insert_end(struct node *, int);
-struct node *insert_index(struct node *, int, int);
-struct node *del_beg(struct node *);
-struct node *del_end(struct node *);
-struct node *del_index(struct node *, int);
-
-int main()
+class Linked_List
 {
-    struct node *head, *new_node1, *new_node2;
-    head = NULL;
-    head = insert_index(head, 5, 0);
-    head = insert_beg(head, 4);
-    head = insert_end(head, 7);
-    head = insert_end(head, 8);
-    head = insert_index(head, 6, 2);
-    printf("Before deleting:\n");
-    display_nodes(head);
-    printf("After deleting:\n");
-    head = del_index(head, 3);
-    display_nodes(head);
-    return 0;
-}
+    struct Node *head;
 
-int count_nodes(struct node *head)
-{
-    int count = 0;
-    struct node *temp = head;
-
-    while (temp != NULL)
+public:
+    Linked_List()
     {
-        count++;
-        temp = temp->next;
+        head = NULL;
     }
-    return count;
-}
-
-void display_nodes(struct node *head)
-{
-    struct node *temp = head;
-
-    if (head == NULL)
+    // Method to count the number of elements in the list : O(n)
+    int count_nodes()
     {
-        printf("Empty list.");
-    }
-    else
-    {
+        int count = 0;
+        struct Node *temp = head;
 
         while (temp != NULL)
         {
-            printf("%d->", temp->data);
+            count++;
             temp = temp->next;
         }
+        return count;
     }
-}
 
-struct node *insert_beg(struct node *head, int data)
-{
-    struct node *new_node;
-    new_node = (struct node *)malloc(sizeof(struct node));
-    new_node->next = head;
-    new_node->data = data;
-    return new_node;
-}
-
-struct node *insert_end(struct node *head, int data)
-{
-    struct node *new_node, *temp;
-    new_node = (struct node *)malloc(sizeof(struct node));
-    new_node->data = data;
-    new_node->next = NULL;
-    temp = head;
-    while (temp->next != NULL)
+    // Method to display the contents of the list: O(n)
+    void display()
     {
-        temp = temp->next;
-    }
-    temp->next = new_node;
-    return head;
-}
-
-struct node *insert_index(struct node *head, int data, int index)
-{
-    struct node *temp, *new_node;
-
-    new_node = (struct node *)malloc(sizeof(struct node));
-    new_node->data = data;
-    temp = head;
-
-    if (index == 0)
-    {
-        return insert_beg(head, data);
-    }
-    else if (index == count_nodes(head) - 1)
-    {
-        return insert_end(head, data);
-    }
-    else
-    {
-        int i = 0;
-        while (i != index - 1)
-        {
-            temp = temp->next;
-            i++;
-        }
-        new_node->next = temp->next;
-        temp->next = new_node;
-        return head;
-    }
-}
-
-struct node *del_beg(struct node *head)
-{
-    if (head == NULL)
-    {
-        return NULL;
-    }
-    else
-    {
-        struct node *temp;
+        struct Node *temp;
         temp = head;
-        head = head->next;
-        free(temp);
-        return head;
-    }
-}
 
-struct node *del_index(struct node *head, int index)
-{
-    if (head == NULL)
-    {
-        return NULL;
-    }
-    else
-    {
-        int i = 0;
-        struct node *p, *q;
-        p = head;
-        q = head->next;
-
-        while (i != index - 1)
+        if (head == NULL)
         {
-            p = p->next;
-            q = q->next;
-            i++;
+            printf("Empty list.");
         }
-        p->next = q->next;
-        free(q);
-        return head;
-    }
-}
-
-struct node *del_end(struct node *head)
-{
-    if (head == NULL)
-    {
-        return NULL;
-    }
-    else
-    {
-        struct node *p, *q;
-        p = head;
-        q = head->next;
-        while (q->next != NULL)
+        else
         {
-            p = p->next;
-            q = q->next;
+
+            while (temp != NULL)
+            {
+                printf("%d->", temp->data);
+                temp = temp->next;
+            }
+            printf("%d nodes",count_nodes());
         }
-        p->next = NULL;
-        free(q);
-        return head;
+    }
+
+    // Method to insert a number in beginning of the list: O(1)
+    void insert_beg(int data)
+    {
+        struct Node *new_node;
+        new_node = (struct Node *)malloc(sizeof(struct Node));
+        new_node->data = data;
+        new_node->next = head;
+        head = new_node;
+        printf("Element has been inserted at the beginning.\n");
+    }
+
+    // Method to insert a number in end of the list: O(n)
+    void insert_end(int data)
+    {
+        struct Node *temp, *new_node;
+        new_node = (struct Node *)malloc(sizeof(struct Node));
+        new_node->data = data;
+        new_node->next = NULL;
+        temp = head;
+
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = new_node;
+        printf("Element has been inserted at the end.\n");
+    }
+
+    // Method to insert a number in given position of the list: O(n)
+    void insert_pos(int data, int pos)
+    {
+        struct Node *temp, *new_node;
+        new_node = (struct Node *)malloc(sizeof(struct Node));
+        new_node->data = data;
+        temp = head;
+
+        if (pos == 0)
+        {
+            insert_beg(data);
+        }
+        else if (pos == count_nodes() - 1)
+        {
+            insert_end(data);
+        }
+        else
+        {
+            int index = 0;
+            while (index != pos-1)
+            {
+                temp = temp->next;
+                index++;
+            }
+            new_node->next = temp->next;
+            temp->next = new_node;
+            printf("Element has been inserted at position %d.\n", pos);
+        }
+    }
+
+    // Method to delete the first element in the list: O(1)
+    int delete_beg()
+    {
+        if (head == NULL)
+        {
+            printf("Empty List. Nothing to be deleted.");
+            return -1; // Return a default value to indicate failure
+        }
+        else
+        {
+            struct Node *temp;
+            int deleted_value;
+            temp = head;
+            head = head->next;
+            deleted_value = temp->data;
+            free(temp);
+            printf("First element (%d) has been deleted.\n", deleted_value);
+            return deleted_value;
+        }
+    }
+
+    // Method to delete the last element in the list and return the deleted element
+    int delete_end()
+    {
+        if (head == NULL)
+        {
+            printf("Empty List. Nothing to be deleted.");
+            return -1; // Return a default value to indicate failure
+        }
+        else
+        {
+            int deleted_value;
+            if (count_nodes() == 1)
+            {
+                return delete_beg(); // If there's only one node, call delete_beg()
+            }
+            else
+            {
+                struct Node *p, *q;
+                p = head;
+                q = head->next;
+                while (q->next != NULL)
+                {
+                    p = p->next;
+                    q = q->next;
+                }
+                p->next = NULL;
+                deleted_value = q->data;
+                free(q);
+                printf("Last element (%d) has been deleted.\n", deleted_value);
+                return deleted_value;
+            }
+        }
+    }
+
+    // Method to delete the element at a specified position in the list and return the deleted element
+    int delete_pos(int pos)
+    {
+        if (head == NULL)
+        {
+            printf("Empty List. Nothing to be deleted.");
+            return -1; // Return a default value to indicate failure
+        }
+        else
+        {
+            int deleted_value;
+            if (pos == 0)
+            {
+                return delete_beg(); // If position is 0, call delete_beg()
+            }
+            else if (pos == count_nodes() - 1)
+            {
+                return delete_end(); // If position is last, call delete_end()
+            }
+            else
+            {
+                int i = 0;
+                struct Node *p, *q;
+                p = head;
+                q = head->next;
+                for (int i = 0; i < pos - 1; i++)
+                {
+                    p = p->next;
+                    q = q->next;
+                }
+                p->next = q->next;
+                deleted_value = q->data;
+                free(q);
+                printf("Element at position %d (%d) has been deleted.\n", pos, deleted_value);
+                return deleted_value;
+            }
+        }
+    }
+
+    // Method to delete the iTH element in the list : O(n)
+    void search(int data)
+    {
+        struct Node *temp;
+        temp = head;
+        int found, index;
+        found = 0;
+        index = 0;
+        while (temp != NULL)
+        {
+            if (temp->data == data)
+            {
+                found = 1;
+                break;
+            }
+            else
+            {
+                temp = temp->next;
+                index += 1;
+            }
+        }
+        if (found == 1)
+        {
+            printf("The element %d has been found at index %d", data, index);
+        }
+        else
+        {
+            printf("The given element does not exist in the list.");
+        }
+    }
+
+    // Method to display the contents of the list reversed : O(n)
+    void display_reverse()
+    {
+        int arr[count_nodes()];
+        struct Node *temp;
+        temp = head;
+        int index = 0;
+        while (temp != NULL)
+        {
+            arr[index] = temp->data;
+            temp = temp->next;
+            index += 1;
+        }
+        printf("Displaying the list in reverse order:\n");
+        for (int i = count_nodes() - 1; i >= 0; i--)
+        {
+            printf("%d->", arr[i]);
+        }
+    }
+
+    // Method to reverse the list: O(n)
+    void reverse()
+    {
+        if (head == NULL)
+        {
+            printf("Empty list.");
+        }
+        else
+        {
+            struct Node *curr, *prev, *next;
+            curr = head;
+            prev = NULL;
+            next = NULL;
+            while (curr != NULL)
+            {
+                next = curr->next;
+                curr->next = prev;
+                prev = curr;
+                curr = next;
+            }
+
+            head = prev;
+            printf("The list has been reversed.");
+        }
+    }
+};
+
+int main()
+{
+
+    Linked_List l1;
+    int choice, num, pos;
+
+    while (1)
+    {
+        printf("\nEnter \n1. Insert Begin\n2. Insert End\n3. Insert Position");
+        printf("\n4. Delete Begin\n5. Delete End\n6. Delete Position");
+        printf("\n7. Search\n8. Display\n9. Display Reverse\n10.Reverse Link\n11.Exit");
+        printf("\n Enter a choice:");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+            printf("Enter the number:");
+            scanf("%d", &num);
+            l1.insert_beg(num);
+            break;
+        case 2:
+            printf("Enter the number:");
+            scanf("%d", &num);
+            l1.insert_end(num);
+            break;
+        case 3:
+            printf("\n Enter the number insert:");
+            scanf("%d", &num);
+            printf("\n Enter the position at which you want to insert:");
+            scanf("%d", &pos);
+            l1.insert_pos(num, pos);
+            break;
+        case 4:
+            l1.delete_beg();
+            break;
+        case 5:
+            l1.delete_end();
+            break;
+        case 6:
+            printf("\n Enter the position at which you want to delete:");
+            scanf("%d", &pos);
+            l1.delete_pos(pos);
+            break;
+        case 7:
+            printf("\n Enter the number  which you want to search:");
+            scanf("%d", &num);
+            l1.search(num);
+            break;
+        case 8:
+            l1.display();
+            break;
+        case 9:
+            l1.display_reverse();
+            break;
+        case 10:
+            l1.reverse();
+            break;
+        case 11:
+            exit(1);
+            break;
+        default:
+            printf("\n Enter a valid choice\n");
+            break;
+        }
     }
 }
