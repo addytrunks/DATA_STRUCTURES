@@ -50,7 +50,6 @@ public:
                 printf("%d->", temp->data);
                 temp = temp->next;
             }
-            printf("%d nodes",count_nodes());
         }
     }
 
@@ -98,10 +97,12 @@ public:
         {
             insert_end(data);
         }
-        else
+        else if(pos < 0 || pos >= count_nodes()){
+            printf("Invalid position.");
+        }else
         {
             int index = 0;
-            while (index != pos-1)
+            while (index != pos - 1)
             {
                 temp = temp->next;
                 index++;
@@ -270,6 +271,7 @@ public:
             curr = head;
             prev = NULL;
             next = NULL;
+
             while (curr != NULL)
             {
                 next = curr->next;
@@ -277,7 +279,6 @@ public:
                 prev = curr;
                 curr = next;
             }
-
             head = prev;
             printf("The list has been reversed.");
         }
