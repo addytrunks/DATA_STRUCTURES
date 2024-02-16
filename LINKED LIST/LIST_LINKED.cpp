@@ -93,7 +93,7 @@ public:
         {
             insert_beg(data);
         }
-        else if (pos == count_nodes() - 1)
+        else if (pos == count_nodes())
         {
             insert_end(data);
         }
@@ -189,7 +189,6 @@ public:
             }
             else
             {
-                int i = 0;
                 struct Node *p, *q;
                 p = head;
                 q = head->next;
