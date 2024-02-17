@@ -55,11 +55,11 @@ int main()
             l2.insertAscending(num);
             break;
         case 3:
-            printf("\nMerging contents of List 1 and List 2 into List 3.\n");
+            printf("\nMerged contents of List 1 and List 2 into List 3.\n");
             l3.mergeLists(l1,l2);
             break;
         case 4:
-            printf("Choose what list you want to display:(1/2/3):");
+            printf("\nChoose what list you want to display:(1/2/3):\n");
             scanf("%d",&l_choice);
 
             if(l_choice == 1){
@@ -74,6 +74,7 @@ int main()
             exit(1);
             break;
         default:
+            printf("\nEnter a valid choice.\n");
             break;
         }
     }
