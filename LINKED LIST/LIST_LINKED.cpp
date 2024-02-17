@@ -134,7 +134,7 @@ public:
         }
     }
 
-    // Method to delete the last element in the list and return the deleted element
+    // Method to delete the last element in the list and return the deleted element : O(1)
     int delete_end()
     {
         if (head == NULL)
@@ -168,7 +168,7 @@ public:
         }
     }
 
-    // Method to delete the element at a specified position in the list and return the deleted element
+    // Method to delete the element at a specified position in the list and return the deleted element : O(1)
     int delete_pos(int pos)
     {
         if (head == NULL)
