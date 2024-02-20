@@ -21,14 +21,15 @@ public:
         tail = NULL;
     }
 
-    int count_nodes(); // O(1)
-    void display(); // O(n)
-    void insert_beg(int); // O(1)
-    void insert_end(int); // O(1)
-    void insert_pos(int,int);// O(n)
-    int delete_beg(); // O(1)
-    int delete_end(); // O(n)
-    int delete_pos(int); // O(n)
+    int count_nodes();              // O(1)
+    void display();                 // O(n)
+    void insert_beg(int);           // O(1)
+    void insert_end(int);           // O(1)
+    void insert_pos(int, int);      // O(n)
+    int delete_beg();               // O(1)
+    int delete_end();               // O(n)
+    int delete_pos(int);            // O(n)
+    int insertposoe(int, int, int); // O(n);
 };
 
 int main()
@@ -40,7 +41,7 @@ int main()
     {
         printf("\nEnter \n1. Insert Begin\n2. Insert End\n3. Insert Position");
         printf("\n4. Delete Begin\n5. Delete End\n6. Delete Position");
-        printf("\n7. Search\n8. Display\n9. Display Reverse\n10.Reverse Link\n11.Exit");
+        printf("\n7. Search\n8. Display\n9.Insert(Odd or even)\n10.Exit");
         printf("\n Enter a choice:");
         scanf("%d", &choice);
 
@@ -76,6 +77,26 @@ int main()
             break;
         case 8:
             l1.display();
+            break;
+        case 9:
+            int ncount;
+            printf("\nTo insert a number after n odd/even positons:\nEnter n:");
+            scanf("%d", &ncount);
+            printf("\nEnter:\n1. for odd\n2. for even: ");
+            scanf("%d", &choice);
+            printf("\nEnter the number you want to insert: ");
+            scanf("%d", &num);
+            if (l1.insertposoe(ncount, choice, num))
+            {
+                printf("\ninsertion successful.");
+            }
+            else
+            {
+                printf("\nInsertion failed.");
+            }
+            break;
+        case 10:
+            exit(1);
             break;
         default:
             printf("\n Enter a valid choice\n");
@@ -193,7 +214,7 @@ int CircularLinkedList::delete_beg()
     if (head == NULL)
     {
         printf("Empty List.");
-        return -1;
+        return NULL;
     }
     // Only one element present
     else if (tail == head)
@@ -224,7 +245,7 @@ int CircularLinkedList::delete_end()
     if (head == NULL)
     {
         printf("Empty List.");
-        return -1;
+        return NULL;
     }
     // Only one element present
     else if (tail == head)
@@ -260,7 +281,7 @@ int CircularLinkedList::delete_pos(int pos)
     if (head == NULL)
     {
         printf("Empty list");
-        return -1;
+        return NULL;
     }
     else if (pos < 1 || pos > count_nodes() + 1)
     {
@@ -292,4 +313,75 @@ int CircularLinkedList::delete_pos(int pos)
         printf("Element at position %d (%d) has been deleted.\n", pos, deleted_value);
         return deleted_value;
     }
+}
+
+int CircularLinkedList::insertposoe(int ncount, int choice, int num)
+{
+    struct Node *temp = head;
+    struct Node *newnode = (struct Node *)malloc(sizeof(struct Node));
+    if (choice == 1)
+    {
+        int count = 0;
+        if (temp != NULL)
+        {
+            do
+            {
+                count += 1;
+                temp = temp->next;
+            } while (temp != head);
+        }
+        if (ncount < 1 || count < (ncount * 2) - 1 || count == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            for (int i = 1; i < (2 * ncount) - 1; i++)
+            {
+                temp = temp->next;
+            }
+            newnode->data = num;
+            newnode->next = temp->next;
+            temp->next = newnode;
+            if (tail->next == newnode)
+            {
+                tail = newnode;
+                tail->next = head;
+            }
+            return 1;
+        }
+    }
+    else if (choice == 2)
+    {
+        int count = 0;
+        if (temp != NULL)
+        {
+            do
+            {
+                count += 1;
+                temp = temp->next;
+            } while (temp != head);
+        }
+        if (ncount < 1 || count < (2 * ncount) || count == 0)
+        {
+            return 0;
+        }
+        else
+        {
+            for (int i = 1; i < (2 * ncount); i++)
+            {
+                temp = temp->next;
+            }
+            newnode->data = num;
+            newnode->next = temp->next;
+            temp->next = newnode;
+            if (tail->next == newnode)
+            {
+                tail = newnode;
+                tail->next = head;
+            }
+            return 1;
+        }
+    }
+    return 0;
 }
