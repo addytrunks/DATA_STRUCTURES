@@ -29,7 +29,7 @@ public:
     void display();
     void search();
 
-    void delbeg();
+    int delbeg();
     void delend();
     void delpos(int);
 };
@@ -65,10 +65,19 @@ int main()
             scanf("%d", &num);
             printf("\n Enter the position at which you want to insert:");
             scanf("%d", &pos);
-            l1.insertpos(num,pos);
+            l1.insertpos(num, pos);
             printf("Element has been inserted at the given position.\n");
             break;
         case 4:
+            num = l1.delbeg();
+            if (num)
+            {
+                printf("%d has been deleted from the list", num);
+            }
+            else
+            {
+                printf("Empty list.Nothing to delete.");
+            }
             break;
         case 5:
             break;
@@ -91,19 +100,22 @@ int main()
     return 0;
 }
 
-int DoublyLinkedList::countnodes(){
+int DoublyLinkedList::countnodes()
+{
     int count = 0;
     struct Node *temp;
     temp = head;
-    while(temp!=NULL){
-        count+=1;
+    while (temp != NULL)
+    {
+        count += 1;
         temp = temp->next;
     }
 
     return count;
 }
 
-void DoublyLinkedList::display(){
+void DoublyLinkedList::display()
+{
     if (head == NULL)
     {
         printf("Empty List.Nothing to display.\n");
@@ -138,7 +150,8 @@ void DoublyLinkedList::insertbeg(int data)
     }
 }
 
-void DoublyLinkedList::insertend(int data){
+void DoublyLinkedList::insertend(int data)
+{
 
     if (head == NULL)
     {
@@ -159,22 +172,30 @@ void DoublyLinkedList::insertend(int data){
     }
 }
 
-void DoublyLinkedList::insertpos(int data,int pos){
-    if(head == NULL){
+void DoublyLinkedList::insertpos(int data, int pos)
+{
+    if (head == NULL)
+    {
         insertbeg(data);
-    }else if(pos == countnodes() +1){
+    }
+    else if (pos == countnodes() + 1)
+    {
         insertend(data);
-    }else if(pos<0 || pos>countnodes() + 1){
+    }
+    else if (pos < 0 || pos > countnodes() + 1)
+    {
         printf("Invalid Position.\n");
     }
-    else{
+    else
+    {
         struct Node *new_node = (struct Node *)malloc(sizeof(struct Node));
         new_node->data = data;
         struct Node *temp;
 
         temp = head;
 
-        for(int i = 1;i < pos - 1;i++){
+        for (int i = 1; i < pos - 1; i++)
+        {
             temp = temp->next;
         }
 
@@ -182,6 +203,30 @@ void DoublyLinkedList::insertpos(int data,int pos){
         temp->next->prev = new_node;
         temp->next = new_node;
         new_node->prev = temp;
+    }
+}
 
+int DoublyLinkedList::delbeg()
+{
+    if (head == NULL)
+    {
+        return NULL;
+    }
+    // If only one element exist
+    else if (head->next == NULL)
+    {
+        int data = head->data;
+        head = NULL;
+        free(head);
+        return data;
+    }
+    else
+    {
+        struct Node *temp = head;
+        int data = head->data;
+        head = head->next;
+        head->prev = NULL;
+        free(temp);
+        return data;
     }
 }
