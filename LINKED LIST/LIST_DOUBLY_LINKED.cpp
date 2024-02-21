@@ -1,43 +1,41 @@
-// implementation of doubly linked list
+// Implementation of Doubly Linked List ADT.
+// NOTE: The terms node and element will be used interchangeably.
 
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Node
-{
+struct Node{
     int data;
-    struct Node *prev;
     struct Node *next;
+    struct Node *prev;
 };
 
-class DoublyLinkedList
-{
+class DoublyLinkedList{
+
+    // Reference to the top-most/first element of the list.
     struct Node *head;
+    public:
+        DoublyLinkedList(){
+            head = NULL;
+        }
+        
+        int count_nodes(); // O(n)
+        void display(); // O(n)
 
-public:
-    DoublyLinkedList()
-    {
-        head = NULL;
-    }
+        void insert_beg(int); // O(1)
+        void insert_end(int); // O(n)
+        void insert_pos(int,int); // O(n)
 
-    int countnodes();
+        int del_beg(); // O(1)
+        int del_end(); // O(n)
+        int del_pos(int); // O(n)
 
-    void insertbeg(int);
-    void insertend(int);
-    void insertpos(int, int);
-
-    void display();
-    void search();
-
-    int delbeg();
-    void delend();
-    void delpos(int);
+        void search(int); // O(n)
 };
 
-int main()
-{
+int main(){
     DoublyLinkedList l1;
-    int choice, num, pos;
+    int choice, num, pos,ret_del;
 
     while (1)
     {
@@ -46,61 +44,80 @@ int main()
         printf("\n7. Search\n8. Display\n9.Exit");
         printf("\n Enter a choice:");
         scanf("%d", &choice);
-        switch (choice)
-        {
-        case 1:
-            printf("Enter an element to insert at the beginning:");
-            scanf("%d", &num);
-            l1.insertbeg(num);
-            printf("Element has been inserted at the beginning.\n");
-            break;
-        case 2:
-            printf("Enter an element to insert at the end:");
-            scanf("%d", &num);
-            l1.insertend(num);
-            printf("Element has been inserted at the end.\n");
-            break;
-        case 3:
-            printf("Enter an element to insert:");
-            scanf("%d", &num);
-            printf("\n Enter the position at which you want to insert:");
-            scanf("%d", &pos);
-            l1.insertpos(num, pos);
-            printf("Element has been inserted at the given position.\n");
-            break;
-        case 4:
-            num = l1.delbeg();
-            if (num)
-            {
-                printf("%d has been deleted from the list", num);
-            }
-            else
-            {
-                printf("Empty list.Nothing to delete.");
-            }
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-        case 7:
-            break;
-        case 8:
-            l1.display();
-            break;
-        case 9:
-            exit(1);
-            break;
-        default:
-            printf("Enter a valid choice.");
-            break;
+
+        switch(choice){
+            case 1:
+                printf("Enter an element to insert at the beginning:");
+                scanf("%d", &num);
+                l1.insert_beg(num);
+                printf("Element has been inserted at the beginning.\n");
+                break;
+            case 2:
+                printf("Enter an element to insert at the end:");
+                scanf("%d", &num);
+                l1.insert_end(num);
+                printf("Element has been inserted at the end.\n");
+                break;
+            case 3:
+                printf("Enter an element to insert:");
+                scanf("%d", &num);
+                printf("\n Enter the position at which you want to insert:");
+                scanf("%d", &pos);
+                l1.insert_pos(num, pos);
+                printf("Element has been inserted at the given position.\n");
+                break;
+            case 4:
+                ret_del = l1.del_beg();
+
+                if(ret_del == -1){
+                    printf("Empty List. Cannot perform delete operation.");
+                }else{
+                    printf("The element %d has been deleted from the list.",ret_del);
+                }
+                break;
+            case 5:
+                ret_del = l1.del_end();
+
+                if(ret_del == -1){
+                    printf("Empty List. Cannot perform delete operation.");
+                }else{
+                    printf("The element %d has been deleted from the list.",ret_del);
+                }
+                break;
+            case 6:
+                 printf("Enter the position you want to delete:");
+                 scanf("%d",&pos);
+                 ret_del = l1.del_pos(pos);
+
+                if(ret_del == -1){
+                    printf("Empty List. Cannot perform delete operation.");
+                }else if(ret_del == -2){
+                    printf("Invalid position given.");
+                }else{
+                    printf("The element %d has been deleted from the list.",ret_del);
+                }
+                break;
+                break;
+            case 7:
+                printf("Enter the element you want to search for:");
+                scanf("%d",&num);
+                l1.search(num);
+                break;
+            case 8:
+                l1.display();
+                break;
+            case 9:
+                exit(1);
+                break;
+            default:
+                printf("Enter a valid choice:");
+                break;
         }
     }
-
-    return 0;
 }
 
-int DoublyLinkedList::countnodes()
+// Method to count the number of elements in the list.
+int DoublyLinkedList::count_nodes()
 {
     int count = 0;
     struct Node *temp;
@@ -114,6 +131,7 @@ int DoublyLinkedList::countnodes()
     return count;
 }
 
+// Method to display the elements of the list in forward and reverse order.
 void DoublyLinkedList::display()
 {
     if (head == NULL)
@@ -124,16 +142,28 @@ void DoublyLinkedList::display()
     {
         struct Node *temp = head;
 
-        while (temp != NULL)
+        printf("Display Forward:\n");
+
+        // reason as to why not temp!=NULL, access to the last element will be lost.
+        while (temp->next != NULL)
         {
-            printf("%d->", temp->data);
+            printf("%d <=> ", temp->data);
             temp = temp->next;
+        }
+        printf("%d <=> \n", temp->data);
+
+        printf("Display reverse:\n");
+        while(temp != NULL){
+            printf("%d <=>",temp->data);
+            temp = temp->prev;
         }
     }
 }
 
-void DoublyLinkedList::insertbeg(int data)
+// Method to insert the element in the beginning of the list.
+void DoublyLinkedList::insert_beg(int data)
 {
+    // Allocating memory for the new element/node to be inserted.
     struct Node *new_node = (struct Node *)malloc(sizeof(struct Node));
     new_node->data = data;
     new_node->prev = NULL;
@@ -150,12 +180,13 @@ void DoublyLinkedList::insertbeg(int data)
     }
 }
 
-void DoublyLinkedList::insertend(int data)
+// Method to insert the element in the end of the list.
+void DoublyLinkedList::insert_end(int data)
 {
 
     if (head == NULL)
     {
-        insertbeg(data);
+        insert_beg(data);
     }
     else
     {
@@ -172,17 +203,18 @@ void DoublyLinkedList::insertend(int data)
     }
 }
 
-void DoublyLinkedList::insertpos(int data, int pos)
+// Method to insert the element in the given position (user input) of the list.
+void DoublyLinkedList::insert_pos(int data, int pos)
 {
     if (head == NULL)
     {
-        insertbeg(data);
+        insert_beg(data);
     }
-    else if (pos == countnodes() + 1)
+    else if (pos == count_nodes() + 1)
     {
-        insertend(data);
+        insert_end(data);
     }
-    else if (pos < 0 || pos > countnodes() + 1)
+    else if (pos < 0 || pos > count_nodes() + 1)
     {
         printf("Invalid Position.\n");
     }
@@ -194,6 +226,7 @@ void DoublyLinkedList::insertpos(int data, int pos)
 
         temp = head;
 
+        // Iterating the list till the temporary pointer lands on a position i.e one less than the given position.
         for (int i = 1; i < pos - 1; i++)
         {
             temp = temp->next;
@@ -206,11 +239,12 @@ void DoublyLinkedList::insertpos(int data, int pos)
     }
 }
 
-int DoublyLinkedList::delbeg()
+// Method to delete the element in the beginning of the list.
+int DoublyLinkedList::del_beg()
 {
     if (head == NULL)
     {
-        return NULL;
+        return -1;
     }
     // If only one element exist
     else if (head->next == NULL)
@@ -228,5 +262,80 @@ int DoublyLinkedList::delbeg()
         head->prev = NULL;
         free(temp);
         return data;
+    }
+}
+
+// Method to delete the element in the end of the list.
+int DoublyLinkedList::del_end(){
+    if (head == NULL)
+    {
+        return -1;
+    }// If only one element exist
+    else if (head->next == NULL)
+    {
+        int data = head->data;
+        head = NULL;
+        free(head);
+        return data;
+    }else{
+        struct Node *p,*q;
+        p = head;
+        q = head->next;
+        while(q->next!=NULL){
+            q = q->next;
+            p = p->next;
+        }
+        int data = q->data;
+        q->prev = NULL;
+        p->next = NULL;
+        free(q);
+        return data;
+    }
+}
+
+// Method to delete the element in the given position (user input) of the list.
+int DoublyLinkedList::del_pos(int pos){
+    if(head == NULL){
+        return -1;
+    }else if(pos<0 || pos > count_nodes()+1){
+        return -2;
+    }else if(pos == 0){
+        return del_beg();
+    }else if(pos == count_nodes() + 1){
+        return del_end();
+    }else{
+        struct Node *p,*q;
+        p = head;
+        q = head->next;
+        // Iterating the list till the temporary pointer lands on a position i.e one less than the given position.
+        for(int i = 1; i<pos-1;i++){
+            p = p->next;
+            q = q->next;
+        }
+        int data = q->data;
+        p->next = q->next;
+        q->next->prev = p;
+        free(q);
+        return data;
+    }
+}
+
+// Method to search for the given element (user input) in the list.
+void DoublyLinkedList::search(int num){
+    struct Node *temp = head;
+    int pos = 1;
+    int found = 0;
+    while(temp!=NULL){
+        if(temp->data == num){
+            printf("%d has been found at position no %d.",num,pos);
+            found = 1;
+            break;
+        }
+        temp = temp->next;
+        pos++;
+    }
+
+    if(found == 0){
+        printf("The given element doesn't exist.");
     }
 }
