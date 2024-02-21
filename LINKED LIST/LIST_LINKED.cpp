@@ -1,4 +1,4 @@
-// Linked List Implementation
+// Linked List ADT Implementation 
 #include <stdio.h>
 #include <stdlib.h>
 
