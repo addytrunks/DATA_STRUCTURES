@@ -297,11 +297,11 @@ int DoublyLinkedList::del_end(){
 int DoublyLinkedList::del_pos(int pos){
     if(head == NULL){
         return -1;
-    }else if(pos<0 || pos > count_nodes()+1){
+    }else if(pos<0 || pos > count_nodes()){
         return -2;
-    }else if(pos == 0){
+    }else if(pos == 1){
         return del_beg();
-    }else if(pos == count_nodes() + 1){
+    }else if(pos == count_nodes()){8
         return del_end();
     }else{
         struct Node *p,*q;
