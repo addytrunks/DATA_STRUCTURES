@@ -1,3 +1,5 @@
+// Program to implement stack ADT using array
+
 #include <stdio.h>
 #include <stdlib.h>
 #define SIZE 5
@@ -49,6 +51,7 @@ int main()
     return 0;
 }
 
+// Method to push/add a character to a stack: O(1)
 int Stack_Array::push(char character)
 {
     if (cur == SIZE - 1)
@@ -64,6 +67,7 @@ int Stack_Array::push(char character)
     }
 }
 
+// Method to pop/remove a character from a stack: O(1)
 int Stack_Array::pop()
 {
     if (cur == -1)
@@ -79,6 +83,8 @@ int Stack_Array::pop()
         return 1;
     }
 }
+
+// Method to display the top most character of a stack: O(1)
 int Stack_Array::peek()
 {
     if (cur == -1)
