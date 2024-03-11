@@ -1,20 +1,24 @@
-// Program to implement circular queue using list ADT
+// Program to implement Queue using Linked List ADT
 
 #include <stdio.h>
 #include <stdlib.h>
 #define SIZE 5
 
-class CircularQueue_Array
+struct Node{
+    int data;
+    struct Node *next;
+};
+
+class Queue_LL
 {
-    int *arr;
-    int front, rear;
+    struct Node *head;
+    struct Node *tail;  
 
 public:
-    CircularQueue_Array()
+    Queue_LL()
     {
-        arr = (int *)malloc((SIZE) * sizeof(int));
-        front = -1;
-        rear = -1;
+        head = NULL;
+        tail = NULL;
     }
     void enqueue(int);
     int dequeue();
@@ -23,7 +27,7 @@ public:
 
 int main()
 {
-    CircularQueue_Array queue;
+    Queue_LL queue;
     int choice;
     int data;
     while (1)
@@ -55,53 +59,50 @@ int main()
 }
 
 // Method to add/enqueue an element from the queue : O(1)
-void CircularQueue_Array::enqueue(int number)
-{
-    if ((front == rear+1) || (front == 0 && rear == SIZE-1)) // Check if the queue is full
-    {
-        printf("Size is full. Cannot add.\n");
+void Queue_LL::enqueue(int data){
+    struct Node *new_node;
+    new_node = (struct Node *)malloc(sizeof(struct Node));
+    new_node->data = data;
+    if(head == NULL){
+        head = new_node;
+        tail = new_node;
+    }else if(head->next == NULL){
+        head->next = new_node;
+        tail = new_node;
+    }else{
+        tail->next = new_node;
+        tail = new_node;
     }
-   else
-    {
-        if(front == -1){
-            front = 0;
-        }
-        rear = (rear+1)%SIZE;
-        arr[rear] = number;
-        printf("Number added to the queue\n");
-    }
+    printf("Number added to the queue\n");
 }
 
 // Method to remove/dequeue an element from the queue: O(1)
-int CircularQueue_Array::dequeue(){
-    if (front == -1)  // Check if queue is empty
-    {
+int Queue_LL::dequeue(){
+    struct Node *temp = head;
+    int data;
+    if(head == NULL){
         printf("Empty Queue,nothing to delete\n");
         return -1;
     }else{
-        int data = arr[front];
-        if(front == rear){
-            front = -1;
-            rear = -1;
-        }else{
-            front = (front+1)%SIZE;
-        }
-        printf("%d is the number that  left now\n", data);
+        data = head->data;
+        head = head->next;
+        free(temp);
+        printf("%d is the character that  left now\n", data);
         return data;
     }
 }
 
 // Method to display the element that can leave the queue: O(1)
-int CircularQueue_Array::peek()
+int Queue_LL::peek()
 {
-    if (front == -1) // Check if queue is empty
+    if (head == NULL) // Check if queue is empty
     {
         printf("Empty Queue,nothing to display\n");
         return -1;
     }
     else
     {
-        printf("%d is the number that can leave now\n", arr[front]); // Display and increment front
-        return arr[front];
+        printf("%d is the character that can leave now\n", head->data); // Display and increment front
+        return head->data;
     }
 }
