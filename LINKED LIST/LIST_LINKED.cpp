@@ -1,4 +1,4 @@
-// Linked List ADT Implementation 
+// Linked List ADT Implementation
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -30,6 +30,15 @@ public:
             temp = temp->next;
         }
         return count;
+    }
+
+    void fun1()
+    {
+        if (head == NULL)
+            return;
+
+        fun1(head->next);
+        printf("%d ", head->data);
     }
 
     // Method to display the contents of the list: O(n)
@@ -97,9 +106,11 @@ public:
         {
             insert_end(data);
         }
-        else if(pos < 0 || pos >= count_nodes()){
+        else if (pos < 0 || pos >= count_nodes())
+        {
             printf("Invalid position.");
-        }else
+        }
+        else
         {
             int index = 0;
             while (index != pos - 1)
