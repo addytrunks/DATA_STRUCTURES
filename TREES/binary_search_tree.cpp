@@ -84,4 +84,8 @@ class BinarySearchTree{
             deleteElement(root->right, data);
         }
     }
+
+    void insert(int data){
+        root = insert(root, data);
+    }
 }
