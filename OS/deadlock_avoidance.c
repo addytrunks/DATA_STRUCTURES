@@ -1,85 +1,86 @@
 #include <stdio.h>
+#include <stdbool.h>
+
 #define NUM_PROCESSES 5
 #define NUM_RESOURCES 3
 
 int available[NUM_RESOURCES];                 // Available resources
 int max[NUM_PROCESSES][NUM_RESOURCES];        // Maximum resources required by each process
 int allocation[NUM_PROCESSES][NUM_RESOURCES]; // Current resource allocation
+int need[NUM_PROCESSES][NUM_RESOURCES];       // Remaining need for each process
 
-// Function to detect if there's a deadlock in the current state and return safe sequence if available
-int detectDeadlock(int safeSequence[])
+// Calculate the need matrix based on max and allocation
+void calculateNeed()
+{
+    for (int i = 0; i < NUM_PROCESSES; i++)
+    {
+        for (int j = 0; j < NUM_RESOURCES; j++)
+        {
+            need[i][j] = max[i][j] - allocation[i][j];
+        }
+    }
+}
+
+// Function to check if the system is in a safe state and return a safe sequence if available
+int isSafe(int safeSequence[])
 {
     int work[NUM_RESOURCES];
-    int finish[NUM_PROCESSES];
+    bool finish[NUM_PROCESSES] = {false}; // Keeps track of completed processes
 
-    // Initialize work (available resources) and finish (process status) arrays
+    // Initialize work with available resources
     for (int i = 0; i < NUM_RESOURCES; i++)
     {
         work[i] = available[i];
     }
-    for (int i = 0; i < NUM_PROCESSES; i++)
-    {
-        finish[i] = 0; // 0 indicates unfinished
-    }
 
-    int foundProcess = 1; // Flag to check if at least one process could finish in an iteration
-    int safeIndex = 0;    // Index to track the safe sequence
+    int safeIndex = 0; // Index to track the safe sequence
+    int count = 0;     // Number of processes that can finish
 
-    while (foundProcess)
+    while (count < NUM_PROCESSES)
     {
-        foundProcess = 0;
+        bool found = false;
         for (int i = 0; i < NUM_PROCESSES; i++)
         {
-            if (finish[i] == 0) // Process is unfinished
-            {
+            if (!finish[i])
+            { // Check if process i can finish
                 int j;
                 for (j = 0; j < NUM_RESOURCES; j++)
                 {
-                    if (max[i][j] - allocation[i][j] > work[j])
+                    if (need[i][j] > work[j])
                     {
-                        break; // Process can't finish
+                        break; // Process can't finish if it needs more than available
                     }
                 }
-                if (j == NUM_RESOURCES) // Process can finish
-                {
+                if (j == NUM_RESOURCES)
+                { // Process i can finish
                     for (int k = 0; k < NUM_RESOURCES; k++)
                     {
-                        work[k] += allocation[i][k]; // Free the resources
+                        work[k] += allocation[i][k]; // Free resources allocated to i
                     }
-                    finish[i] = 1;                 // Mark process as finished
-                    safeSequence[safeIndex++] = i; // Add to safe sequence
-                    foundProcess = 1;              // At least one process could finish
+                    finish[i] = true;
+                    safeSequence[safeIndex++] = i;
+                    count++;
+                    found = true;
                 }
             }
         }
-    }
-
-    // Check for any unfinished process to determine deadlock
-    int deadlockFound = 0;
-    printf("Checking for deadlock...\n");
-    for (int i = 0; i < NUM_PROCESSES; i++)
-    {
-        if (finish[i] == 0) // Process couldn't finish, indicating deadlock
+        if (!found)
         {
-            printf("Deadlock detected. Process P%d cannot finish.\n", i);
-            deadlockFound = 1;
+            printf("System is not in a safe state\n");
+            return 1; // Return 1 if deadlock is detected (unsafe state)
         }
     }
-
-    if (!deadlockFound)
+    printf("System is in a safe state\n");
+    printf("Safe sequence: ");
+    for (int i = 0; i < safeIndex; i++)
     {
-        printf("No deadlock detected.\n");
-        printf("Safe sequence is: ");
-        for (int i = 0; i < safeIndex; i++)
-        {
-            printf("P%d ", safeSequence[i]);
-        }
-        printf("\n");
+        printf("P%d ", safeSequence[i]);
     }
-
-    return deadlockFound; // 1 if deadlock detected, 0 otherwise
+    printf("\n");
+    return 0; // Return 0 if safe state is detected
 }
 
+// Main function to check for deadlock and request resources
 int main()
 {
     // Input available resources
@@ -109,17 +110,69 @@ int main()
         }
     }
 
+    // Calculate the need matrix
+    calculateNeed();
+
     // Array to hold the safe sequence
     int safeSequence[NUM_PROCESSES];
 
-    // Call the deadlock detection function
-    if (detectDeadlock(safeSequence))
+    // Check if the system is in a safe state
+    isSafe(safeSequence);
+
+    // Request resources from a specific process
+    int process_id;
+    int request[NUM_RESOURCES];
+
+    printf("Enter the process id to request resources: ");
+    scanf("%d", &process_id);
+
+    printf("Enter the requested resources: ");
+    for (int i = 0; i < NUM_RESOURCES; i++)
     {
-        printf("System is in deadlock state.\n");
+        scanf("%d", &request[i]);
+    }
+
+    // Check if request can be granted without exceeding need
+    bool canGrant = true;
+    for (int i = 0; i < NUM_RESOURCES; i++)
+    {
+        if (request[i] > need[process_id][i] || request[i] > available[i])
+        {
+            canGrant = false;
+            break;
+        }
+    }
+
+    if (canGrant)
+    {
+        // Temporarily allocate resources to check safe state
+        for (int i = 0; i < NUM_RESOURCES; i++)
+        {
+            available[i] -= request[i];
+            allocation[process_id][i] += request[i];
+            need[process_id][i] -= request[i];
+        }
+
+        // Check for safe state
+        if (isSafe(safeSequence) == 0)
+        {
+            printf("Request granted. Resources allocated.\n");
+        }
+        else
+        {
+            // Rollback allocation if unsafe
+            for (int i = 0; i < NUM_RESOURCES; i++)
+            {
+                available[i] += request[i];
+                allocation[process_id][i] -= request[i];
+                need[process_id][i] += request[i];
+            }
+            printf("Request cannot be granted. Rollback performed.\n");
+        }
     }
     else
     {
-        printf("System is not in deadlock state.\n");
+        printf("Request exceeds need or available resources. Cannot be granted.\n");
     }
 
     return 0;
